@@ -1,7 +1,5 @@
 <?php
 
-require_once '../config/db.php';
-
 class Diagnosis {
     private $pdo;
 
@@ -9,15 +7,14 @@ class Diagnosis {
         $this->pdo = $pdo;
     }
 
-    // Menambahkan diagnosis
+    // Tambahkan diagnosis baru
     public function createDiagnosis($consultation_id, $pet_id, $notes, $prescription) {
         $sql = "INSERT INTO diagnoses (consultation_id, pet_id, notes, prescription) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$consultation_id, $pet_id, $notes, $prescription]);
-        return $this->pdo->lastInsertId();
+        return $stmt->execute([$consultation_id, $pet_id, $notes, $prescription]);
     }
 
-    // Mendapatkan diagnosis berdasarkan ID
+    // Ambil diagnosis berdasarkan ID diagnosis
     public function getDiagnosisById($diagnosis_id) {
         $sql = "SELECT * FROM diagnoses WHERE diagnosis_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -25,28 +22,25 @@ class Diagnosis {
         return $stmt->fetch();
     }
 
-    // Mendapatkan diagnosis berdasarkan konsultasi
-    public function getDiagnosisByConsultationId($consultation_id) {
+    // Ambil diagnosis berdasarkan ID konsultasi
+    public function getDiagnosesByConsultationId($consultation_id) {
         $sql = "SELECT * FROM diagnoses WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$consultation_id]);
         return $stmt->fetchAll();
     }
 
-    // Mengupdate diagnosis
+    // Perbarui diagnosis
     public function updateDiagnosis($diagnosis_id, $notes, $prescription) {
         $sql = "UPDATE diagnoses SET notes = ?, prescription = ? WHERE diagnosis_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$notes, $prescription, $diagnosis_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$notes, $prescription, $diagnosis_id]);
     }
 
-    // Menghapus diagnosis
+    // Hapus diagnosis berdasarkan ID diagnosis
     public function deleteDiagnosis($diagnosis_id) {
         $sql = "DELETE FROM diagnoses WHERE diagnosis_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$diagnosis_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$diagnosis_id]);
     }
 }
-?>

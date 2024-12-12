@@ -1,7 +1,5 @@
 <?php
 
-require_once '../config/db.php';
-
 class Consultation {
     private $pdo;
 
@@ -9,7 +7,7 @@ class Consultation {
         $this->pdo = $pdo;
     }
 
-    // Menjadwalkan konsultasi
+    // Tambahkan konsultasi baru
     public function createConsultation($owner_id, $vet_id, $date, $status) {
         $sql = "INSERT INTO consultations (owner_id, vet_id, date, status) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
@@ -17,7 +15,7 @@ class Consultation {
         return $this->pdo->lastInsertId();
     }
 
-    // Mendapatkan konsultasi berdasarkan ID
+    // Ambil konsultasi berdasarkan ID
     public function getConsultationById($consultation_id) {
         $sql = "SELECT * FROM consultations WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -25,7 +23,7 @@ class Consultation {
         return $stmt->fetch();
     }
 
-    // Mendapatkan konsultasi berdasarkan pemilik atau dokter
+    // Ambil konsultasi berdasarkan ID pengguna (owner atau vet)
     public function getConsultationsByUserId($user_id) {
         $sql = "SELECT * FROM consultations WHERE owner_id = ? OR vet_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -33,20 +31,17 @@ class Consultation {
         return $stmt->fetchAll();
     }
 
-    // Mengupdate status konsultasi
+    // Perbarui status konsultasi
     public function updateConsultation($consultation_id, $status) {
         $sql = "UPDATE consultations SET status = ? WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$status, $consultation_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$status, $consultation_id]);
     }
 
-    // Menghapus konsultasi
+    // Hapus konsultasi
     public function deleteConsultation($consultation_id) {
         $sql = "DELETE FROM consultations WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$consultation_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$consultation_id]);
     }
 }
-?>

@@ -1,7 +1,5 @@
 <?php
 
-require_once '../config/db.php';
-
 class Pet {
     private $pdo;
 
@@ -9,15 +7,14 @@ class Pet {
         $this->pdo = $pdo;
     }
 
-    // Menambahkan hewan baru
-    public function createPet($user_id, $name, $species, $age) {
-        $sql = "INSERT INTO pets (user_id, name, species, age) VALUES (?, ?, ?, ?)";
+    // Tambahkan hewan peliharaan
+    public function createPet($user_id, $name, $species, $gender, $age) {
+        $sql = "INSERT INTO pets (user_id, name, species, gender, age) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$user_id, $name, $species, $age]);
-        return $this->pdo->lastInsertId();
+        return $stmt->execute([$user_id, $name, $species, $gender, $age]);
     }
 
-    // Mendapatkan semua hewan milik user
+    // Ambil semua hewan berdasarkan ID pengguna
     public function getPetsByUserId($user_id) {
         $sql = "SELECT * FROM pets WHERE user_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -25,7 +22,7 @@ class Pet {
         return $stmt->fetchAll();
     }
 
-    // Mendapatkan data hewan berdasarkan ID
+    // Ambil data hewan berdasarkan ID hewan
     public function getPetById($pet_id) {
         $sql = "SELECT * FROM pets WHERE pet_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -33,20 +30,17 @@ class Pet {
         return $stmt->fetch();
     }
 
-    // Mengupdate data hewan
-    public function updatePet($pet_id, $name, $species, $age) {
-        $sql = "UPDATE pets SET name = ?, species = ?, age = ? WHERE pet_id = ?";
+    // Perbarui data hewan
+    public function updatePet($pet_id, $name, $species, $gender, $age) {
+        $sql = "UPDATE pets SET name = ?, species = ?, gender = ?, age = ? WHERE pet_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$name, $species, $age, $pet_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$name, $species, $gender, $age, $pet_id]);
     }
 
-    // Menghapus hewan
+    // Hapus hewan peliharaan
     public function deletePet($pet_id) {
         $sql = "DELETE FROM pets WHERE pet_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$pet_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$pet_id]);
     }
 }
-?>

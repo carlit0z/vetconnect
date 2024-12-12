@@ -1,5 +1,4 @@
 <?php
-// backend/controllers/PetController.php
 
 require_once '../models/Pet.php';
 require_once '../config/db.php';
@@ -11,32 +10,37 @@ class PetController {
         $this->petModel = new Pet($pdo);
     }
 
-    // Menambahkan data hewan peliharaan
+    // Tambahkan hewan baru
     public function createPet() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
 
-            if (empty($data->user_id) || empty($data->name) || empty($data->species) || empty($data->age)) {
-                echo json_encode(["message" => "All fields are required."]);
+            // Validasi input
+            if (!isset($data->user_id) || !isset($data->name) || !isset($data->species) || !isset($data->gender) || !isset($data->age)) {
+                echo json_encode(['error' => 'Missing required fields']);
                 return;
             }
 
-            $isCreated = $this->petModel->createPet($data->user_id, $data->name, $data->species, $data->age);
+            $isCreated = $this->petModel->createPet($data->user_id, $data->name, $data->species, $data->gender, $data->age);
 
             if ($isCreated) {
-                echo json_encode(["message" => "Pet added successfully."]);
+                echo json_encode(['message' => 'Pet added successfully']);
             } else {
-                echo json_encode(["message" => "Failed to add pet."]);
+                echo json_encode(['error' => 'Failed to add pet']);
             }
         }
     }
 
-    // Mendapatkan data hewan berdasarkan user_id
-    public function getPetsByUserId($user_id) {
+    // Ambil data hewan berdasarkan user_id
+    public function getPetsByUser($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $pets = $this->petModel->getPetsByUserId($user_id);
-            echo json_encode($pets);
+
+            if ($pets) {
+                echo json_encode($pets);
+            } else {
+                echo json_encode(['error' => 'No pets found']);
+            }
         }
     }
 }
-?>

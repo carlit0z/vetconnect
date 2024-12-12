@@ -1,7 +1,5 @@
 <?php
 
-require_once '../config/db.php';
-
 class User {
     private $pdo;
 
@@ -9,23 +7,14 @@ class User {
         $this->pdo = $pdo;
     }
 
-    // Membuat pengguna baru
+    // Tambahkan pengguna baru
     public function createUser($username, $email, $password, $role) {
         $sql = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT), $role]);
-        return $this->pdo->lastInsertId();
+        return $stmt->execute([$username, $email, $password, $role]);
     }
 
-    // Mendapatkan pengguna berdasarkan ID
-    public function getUserById($user_id) {
-        $sql = "SELECT * FROM users WHERE user_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$user_id]);
-        return $stmt->fetch();
-    }
-
-    // Mendapatkan pengguna berdasarkan email (untuk login)
+    // Ambil pengguna berdasarkan email
     public function getUserByEmail($email) {
         $sql = "SELECT * FROM users WHERE email = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -33,20 +22,25 @@ class User {
         return $stmt->fetch();
     }
 
-    // Mengupdate data pengguna
-    public function updateUser($user_id, $username, $email, $role) {
-        $sql = "UPDATE users SET username = ?, email = ?, role = ? WHERE user_id = ?";
+    // Ambil pengguna berdasarkan ID
+    public function getUserById($user_id) {
+        $sql = "SELECT * FROM users WHERE user_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$username, $email, $role, $user_id]);
-        return $stmt->rowCount();
+        $stmt->execute([$user_id]);
+        return $stmt->fetch();
     }
 
-    // Menghapus pengguna
+    // Perbarui data pengguna
+    public function updateUser($user_id, $username, $email, $password, $role) {
+        $sql = "UPDATE users SET username = ?, email = ?, password = ?, role = ? WHERE user_id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$username, $email, $password, $role, $user_id]);
+    }
+
+    // Hapus pengguna
     public function deleteUser($user_id) {
         $sql = "DELETE FROM users WHERE user_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$user_id]);
-        return $stmt->rowCount();
+        return $stmt->execute([$user_id]);
     }
 }
-?>
