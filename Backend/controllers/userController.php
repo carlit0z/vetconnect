@@ -2,7 +2,6 @@
 
 require_once '../models/User.php';
 require_once '../helpers/JwtHelper.php';
-require_once '../config/db.php';
 
 class UserController {
     private $userModel;
@@ -16,23 +15,15 @@ class UserController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
 
-            // Validasi input
-            if (!isset($data->username) || !isset($data->email) || !isset($data->password) || !isset($data->role)) {
+            if (!isset($data->username, $data->email, $data->password, $data->role)) {
                 echo json_encode(['error' => 'Missing required fields']);
                 return;
             }
 
-            // Hash password
-            $hashedPassword = password_hash($data->password, PASSWORD_DEFAULT);
+            $password = password_hash($data->password, PASSWORD_DEFAULT);
+            $result = $this->userModel->createUser($data->username, $data->email, $password, $data->role);
 
-            // Tambahkan pengguna baru
-            $isCreated = $this->userModel->createUser($data->username, $data->email, $hashedPassword, $data->role);
-
-            if ($isCreated) {
-                echo json_encode(['message' => 'User registered successfully']);
-            } else {
-                echo json_encode(['error' => 'Failed to register user']);
-            }
+            echo json_encode($result ? ['message' => 'User registered successfully'] : ['error' => 'Failed to register user']);
         }
     }
 
@@ -41,24 +32,42 @@ class UserController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
 
-            // Validasi input
-            if (!isset($data->email) || !isset($data->password)) {
-                echo json_encode(['error' => 'Missing required fields']);
-                return;
-            }
-
             $user = $this->userModel->getUserByEmail($data->email);
             if ($user && password_verify($data->password, $user['password'])) {
-                $jwt = JwtHelper::encode(['user_id' => $user['user_id'], 'role' => $user['role']]);
-                echo json_encode(['message' => 'Login successful', 'token' => $jwt]);
+                $token = JwtHelper::encode(['user_id' => $user['user_id'], 'role' => $user['role']]);
+                echo json_encode(['message' => 'Login successful', 'token' => $token]);
             } else {
-                echo json_encode(['error' => 'Invalid email or password']);
+                echo json_encode(['error' => 'Invalid credentials']);
             }
         }
     }
 
-    // Logout pengguna (opsional untuk hapus token dari client)
-    public function logout() {
-        echo json_encode(['message' => 'Logout successful']);
+    // Ambil semua pengguna
+    public function getAllUsers() {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $users = $this->userModel->getAllUsers();
+            echo json_encode($users);
+        }
+    }
+
+    // Update data pengguna
+    public function updateUser($user_id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $data = json_decode(file_get_contents("php://input"));
+
+            $password = isset($data->password) ? password_hash($data->password, PASSWORD_DEFAULT) : null;
+            $result = $this->userModel->updateUser($user_id, $data->username, $data->email, $password, $data->role);
+
+            echo json_encode($result ? ['message' => 'User updated successfully'] : ['error' => 'Failed to update user']);
+        }
+    }
+
+    // Hapus pengguna
+    public function deleteUser($user_id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $result = $this->userModel->deleteUser($user_id);
+
+            echo json_encode($result ? ['message' => 'User deleted successfully'] : ['error' => 'Failed to delete user']);
+        }
     }
 }

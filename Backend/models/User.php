@@ -7,7 +7,7 @@ class User {
         $this->pdo = $pdo;
     }
 
-    // Tambahkan pengguna baru
+    // Tambah pengguna baru
     public function createUser($username, $email, $password, $role) {
         $sql = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
@@ -30,11 +30,22 @@ class User {
         return $stmt->fetch();
     }
 
+    public function getAllUsers() {
+
+        $stmt = $this->pdo->prepare("SELECT * FROM users");
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
     // Perbarui data pengguna
-    public function updateUser($user_id, $username, $email, $password, $role) {
-        $sql = "UPDATE users SET username = ?, email = ?, password = ?, role = ? WHERE user_id = ?";
+    public function updateUser($user_id, $username, $email, $password = null, $role) {
+        $sql = "UPDATE users SET username = ?, email = ?, role = ?".($password ? ", password = ?" : "")." WHERE user_id = ?";
+        $params = $password ? [$username, $email, $password, $role, $user_id] : [$username, $email, $role, $user_id];
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$username, $email, $password, $role, $user_id]);
+        return $stmt->execute($params);
     }
 
     // Hapus pengguna

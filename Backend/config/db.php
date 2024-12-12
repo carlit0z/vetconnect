@@ -1,11 +1,17 @@
 <?php
+// File: config/db.php
 
-require_once 'config.php';
+$host = 'localhost'; // Host database
+$dbname = 'vetconnect'; // Nama database
+$username = 'root'; // Username database
+$password = ''; // Password database (sesuaikan jika ada)
 
 try {
-    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+    // Membuat koneksi ke database menggunakan PDO
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Menangani error
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); // Fetch data sebagai array asosiatif
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); // Default mode fetch
 } catch (PDOException $e) {
-    die('Koneksi database gagal: ' . $e->getMessage());
+    // Jika koneksi gagal
+    die("Database isn`t connect: " . $e->getMessage());
 }

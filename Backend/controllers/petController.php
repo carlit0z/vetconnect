@@ -1,7 +1,6 @@
 <?php
 
 require_once '../models/Pet.php';
-require_once '../config/db.php';
 
 class PetController {
     private $petModel;
@@ -10,37 +9,47 @@ class PetController {
         $this->petModel = new Pet($pdo);
     }
 
-    // Tambahkan hewan baru
+    // Tambah hewan baru
     public function createPet() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
 
-            // Validasi input
-            if (!isset($data->user_id) || !isset($data->name) || !isset($data->species) || !isset($data->gender) || !isset($data->age)) {
+            if (!isset($data->user_id, $data->name, $data->species, $data->age)) {
                 echo json_encode(['error' => 'Missing required fields']);
                 return;
             }
 
-            $isCreated = $this->petModel->createPet($data->user_id, $data->name, $data->species, $data->gender, $data->age);
+            $result = $this->petModel->createPet($data->user_id, $data->name, $data->species, $data->age);
 
-            if ($isCreated) {
-                echo json_encode(['message' => 'Pet added successfully']);
-            } else {
-                echo json_encode(['error' => 'Failed to add pet']);
-            }
+            echo json_encode($result ? ['message' => 'Pet added successfully'] : ['error' => 'Failed to add pet']);
         }
     }
 
-    // Ambil data hewan berdasarkan user_id
-    public function getPetsByUser($user_id) {
+    // Ambil semua hewan berdasarkan ID pengguna
+    public function getPetsByUserId($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $pets = $this->petModel->getPetsByUserId($user_id);
+            echo json_encode($pets);
+        }
+    }
 
-            if ($pets) {
-                echo json_encode($pets);
-            } else {
-                echo json_encode(['error' => 'No pets found']);
-            }
+    // Update data hewan
+    public function updatePet($pet_id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $data = json_decode(file_get_contents("php://input"));
+
+            $result = $this->petModel->updatePet($pet_id, $data->name, $data->species, $data->age);
+
+            echo json_encode($result ? ['message' => 'Pet updated successfully'] : ['error' => 'Failed to update pet']);
+        }
+    }
+
+    // Hapus hewan
+    public function deletePet($pet_id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $result = $this->petModel->deletePet($pet_id);
+
+            echo json_encode($result ? ['message' => 'Pet deleted successfully'] : ['error' => 'Failed to delete pet']);
         }
     }
 }
