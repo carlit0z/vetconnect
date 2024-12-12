@@ -11,8 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Memuat file konfigurasi dan controller
+// Memuat file konfigurasi, helper, dan controller
 require_once 'config/db.php';
+require_once 'helpers/JwtHelper.php';
 require_once 'controllers/UserController.php';
 require_once 'controllers/PetController.php';
 require_once 'controllers/ConsultationController.php';
@@ -26,6 +27,25 @@ $consultationController = new ConsultationController($pdo);
 $diagnosisController = new DiagnosisController($pdo);
 $messageController = new MessageController($pdo);
 
+// Middleware autentikasi
+function authenticate() {
+    $headers = apache_request_headers();
+    if (!isset($headers['Authorization'])) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
+    }
+
+    $token = str_replace('Bearer ', '', $headers['Authorization']);
+    try {
+        return JwtHelper::decode($token); // Mengembalikan data dari token (misalnya user_id, role)
+    } catch (Exception $e) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Invalid or expired token']);
+        exit;
+    }
+}
+
 // Middleware Routing
 $method = $_SERVER['REQUEST_METHOD'];
 $endpoint = $_GET['endpoint'] ?? null;
@@ -38,43 +58,71 @@ switch ($endpoint) {
     case 'user/login':
         if ($method === 'POST') $userController->login();
         break;
-    case 'users':
-        if ($method === 'GET') $userController->getAllUsers();
-        if ($method === 'PUT') $userController->updateUser($_GET['user_id'] ?? null);
-        if ($method === 'DELETE') $userController->deleteUser($_GET['user_id'] ?? null);
-        break;
 
-    // Pet Routes
+    // Pet Routes (Proteksi Auth untuk Owner)
     case 'pets':
-        if ($method === 'POST') $petController->createPet();
-        if ($method === 'GET') $petController->getPetsByUserId($_GET['user_id'] ?? null);
+        $authUser = authenticate(); // Periksa autentikasi
+        if ($method === 'POST') {
+            if ($authUser->role !== 'owner') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Forbidden']);
+                exit;
+            }
+            $petController->createPet();
+        }
+        if ($method === 'GET') {
+            $petController->getPetsByUserId($authUser->user_id); // Ambil pets berdasarkan user_id dari token
+        }
         if ($method === 'PUT') $petController->updatePet($_GET['pet_id'] ?? null);
         if ($method === 'DELETE') $petController->deletePet($_GET['pet_id'] ?? null);
         break;
 
-    // Consultation Routes
+    // Consultation Routes (Proteksi Auth untuk Owner dan Vet)
     case 'consultations':
-        if ($method === 'POST') $consultationController->createConsultation();
-        if ($method === 'GET') $consultationController->getConsultationsByUserId($_GET['user_id'] ?? null);
+        $authUser = authenticate(); // Periksa autentikasi
+        if ($method === 'POST') {
+            if ($authUser->role !== 'owner') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Forbidden']);
+                exit;
+            }
+            $consultationController->createConsultation();
+        }
+        if ($method === 'GET') {
+            if ($authUser->role === 'owner') {
+                $consultationController->getConsultationsByUserId($authUser->user_id);
+            } elseif ($authUser->role === 'vet') {
+                $consultationController->getConsultationsByUserId($authUser->user_id);
+            } else {
+                http_response_code(403);
+                echo json_encode(['error' => 'Forbidden']);
+            }
+        }
         if ($method === 'PUT') $consultationController->updateConsultation($_GET['consultation_id'] ?? null);
         if ($method === 'DELETE') $consultationController->deleteConsultation($_GET['consultation_id'] ?? null);
         break;
 
-    // Diagnosis Routes
+    // Diagnosis Routes (Proteksi Auth untuk Vet)
     case 'diagnoses':
-        if ($method === 'POST') $diagnosisController->createDiagnosis();
-        if ($method === 'GET' && isset($_GET['consultation_id'])) {
-            $diagnosisController->getDiagnosesByConsultationId($_GET['consultation_id']);
+        $authUser = authenticate(); // Periksa autentikasi
+        if ($method === 'POST') {
+            if ($authUser->role !== 'vet') {
+                http_response_code(403);
+                echo json_encode(['error' => 'Forbidden']);
+                exit;
+            }
+            $diagnosisController->createDiagnosis();
         }
-        if ($method === 'GET' && isset($_GET['diagnosis_id'])) {
-            $diagnosisController->getDiagnosisById($_GET['diagnosis_id']);
+        if ($method === 'GET') {
+            $diagnosisController->getDiagnosesByConsultationId($_GET['consultation_id'] ?? null);
         }
         if ($method === 'PUT') $diagnosisController->updateDiagnosis($_GET['diagnosis_id'] ?? null);
         if ($method === 'DELETE') $diagnosisController->deleteDiagnosis($_GET['diagnosis_id'] ?? null);
         break;
 
-    // Message Routes
+    // Message Routes (Proteksi Auth untuk Owner dan Vet)
     case 'messages':
+        $authUser = authenticate(); // Periksa autentikasi
         if ($method === 'POST') $messageController->createMessage();
         if ($method === 'GET') $messageController->getMessagesByConsultationId($_GET['consultation_id'] ?? null);
         break;
