@@ -139,8 +139,8 @@
             </div>
             <div class="form-group">
                 <label for="nama-hewan">Nama Hewan</label>
-                <input type="nama-hewan" id="nama-hewan" placeholder="Masukkan nama hewan Anda" required>
-                <div class="error-message" id="email-error"></div>
+                <input type="text" id="nama-hewan" placeholder="Masukkan nama hewan Anda" required>
+                <div class="error-message" id="nama-hewan-error"></div>
             </div>
             <div class="form-group">
                 <label for="message">Pesan Konsultasi</label>
@@ -152,6 +152,46 @@
             <div class="success-message" id="success-message"></div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('consultation-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const petName = document.getElementById('nama-hewan').value;
+            const message = document.getElementById('message').value;
+
+            try {
+                // Kirim data ke server
+                const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=consultations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        owner_name: name,
+                        owner_email: email,
+                        pet_name: petName,
+                        consultation_message: message
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('success-message').innerText = 'Konsultasi berhasil dibuat!';
+                    document.getElementById('consultation-form').reset();
+                } else {
+                    alert(data.error || 'Gagal mengirim konsultasi.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+    </script>
 </body>
 
 </html>

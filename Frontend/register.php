@@ -132,7 +132,7 @@
     <section class="register-section">
         <div class="register-container">
             <h2>Daftar untuk Akun Baru</h2>
-            <form action="proses.php" method="POST">
+            <form id="register-form">
                 <div class="input-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" placeholder="Masukkan Username" required>
@@ -150,6 +150,40 @@
             </form>
         </div>
     </section>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Kirim data ke server
+                const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=user/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password, role: 'owner' }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Registrasi berhasil! Silakan login.');
+                    window.location.href = 'login.php'; // Redirect ke halaman login
+                } else {
+                    alert(data.error || 'Registrasi gagal');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+    </script>
 </body>
 
 </html>

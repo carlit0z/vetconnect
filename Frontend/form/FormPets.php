@@ -125,15 +125,15 @@
 <body>
     <div class="form-container">
         <h2>Daftar Hewan Peliharaan</h2>
-        <form id="consultation-form">
+        <form id="pet-form">
             <div class="form-group">
                 <label for="nama-hewan">Nama Hewan</label>
-                <input type="nama-hewan" id="nama-hewan" placeholder="Masukkan nama hewan Anda" required>
-                <div class="error-message" id="email-error"></div>
+                <input type="text" id="nama-hewan" placeholder="Masukkan nama hewan Anda" required>
+                <div class="error-message" id="nama-hewan-error"></div>
             </div>
             <div class="form-group">
                 <label for="pet-type">Jenis Hewan</label>
-                <select id="pet-type">
+                <select id="pet-type" required>
                     <option value="" disabled selected>Pilih jenis hewan</option>
                     <option value="Anjing">Anjing</option>
                     <option value="Kucing">Kucing</option>
@@ -141,17 +141,17 @@
                     <option value="Ikan">Ikan</option>
                     <option value="Hewan Lainnya">Hewan Lainnya</option>
                 </select>
-                <div class="error-message" id="pet-error"></div>
+                <div class="error-message" id="pet-type-error"></div>
             </div>
             <div class="form-group">
                 <label for="umur">Umur Hewan</label>
-                <input type="umur" id="umur" placeholder="Masukkan umur Anda" required>
+                <input type="number" id="umur" placeholder="Masukkan umur hewan" required>
                 <div class="error-message" id="umur-error"></div>
             </div>
             <div class="form-group">
                 <label for="pet-gender">Jenis Kelamin</label>
-                <select id="pet-gender">
-                    <option value="" disabled selected>Pilih jenis hewan</option>
+                <select id="pet-gender" required>
+                    <option value="" disabled selected>Pilih jenis kelamin</option>
                     <option value="Jantan">Jantan</option>
                     <option value="Betina">Betina</option>
                 </select>
@@ -161,6 +161,46 @@
             <div class="success-message" id="success-message"></div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('pet-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const name = document.getElementById('nama-hewan').value;
+            const type = document.getElementById('pet-type').value;
+            const age = document.getElementById('umur').value;
+            const gender = document.getElementById('pet-gender').value;
+
+            try {
+                // Kirim data ke server
+                const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=pets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        species: type,
+                        age: age,
+                        gender: gender
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('success-message').innerText = 'Hewan berhasil disimpan!';
+                    document.getElementById('pet-form').reset();
+                } else {
+                    alert(data.error || 'Gagal menyimpan hewan.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+    </script>
 </body>
 
 </html>

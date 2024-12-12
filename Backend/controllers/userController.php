@@ -1,5 +1,7 @@
 <?php
+
 require_once '../models/User.php';
+
 require_once '../helpers/JwtHelper.php';
 
 class UserController {

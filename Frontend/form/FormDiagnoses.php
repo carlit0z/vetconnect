@@ -126,46 +126,81 @@
 <body>
     <div class="form-container">
         <h2>Simpan Diagnosa</h2>
-        <form id="consultation-form">
+        <form id="diagnosis-form">
             <div class="form-group">
-                <label for="pet-type">Id Konsultasi</label>
-                <select id="pet-type">
-                    <option value="" disabled selected>Pilih id konsultasi</option>
+                <label for="consultation-id">ID Konsultasi</label>
+                <select id="consultation-id" required>
+                    <option value="" disabled selected>Pilih ID Konsultasi</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
-                    <option value="Hewan Lainnya">Hewan Lainnya</option>
+                    <option value="3">3</option>
+                </select>
+                <div class="error-message" id="consultation-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="pet-id">ID Hewan</label>
+                <select id="pet-id" required>
+                    <option value="" disabled selected>Pilih ID Hewan</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
                 </select>
                 <div class="error-message" id="pet-error"></div>
             </div>
             <div class="form-group">
-                <label for="pet-type">Id Hewan</label>
-                <select id="pet-type">
-                    <option value="" disabled selected>Pilih id hewan</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="Hewan Lainnya">Hewan Lainnya</option>
-                </select>
-                <div class="error-message" id="pet-error"></div>
+                <label for="notes">Deskripsi</label>
+                <textarea id="notes" rows="4" placeholder="Masukkan deskripsi diagnosa" required></textarea>
+                <div class="error-message" id="notes-error"></div>
             </div>
             <div class="form-group">
-                <label for="umur">Deskripsi</label>
-                <input type="umur" id="umur" placeholder="Masukkan deskripsi diagnosa" required>
-                <div class="error-message" id="umur-error"></div>
-            </div>
-            <div class="form-group">
-                <label for="umur">Persepsi</label>
-                <input type="umur" id="umur" placeholder="Masukkan persepsi diagnosa" required>
-                <div class="error-message" id="umur-error"></div>
-            </div>
-            <div class="form-group">
-                <label for="umur">Catatan</label>
-                <input type="umur" id="umur" placeholder="Masukkan catatan" required>
-                <div class="error-message" id="umur-error"></div>
+                <label for="prescription">Resep</label>
+                <textarea id="prescription" rows="4" placeholder="Masukkan resep diagnosa" required></textarea>
+                <div class="error-message" id="prescription-error"></div>
             </div>
             <button type="submit" class="btn">Simpan</button>
             <div class="success-message" id="success-message"></div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('diagnosis-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const consultationId = document.getElementById('consultation-id').value;
+            const petId = document.getElementById('pet-id').value;
+            const notes = document.getElementById('notes').value;
+            const prescription = document.getElementById('prescription').value;
+
+            try {
+                // Kirim data ke server
+                const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=diagnoses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        consultation_id: consultationId,
+                        pet_id: petId,
+                        notes: notes,
+                        prescription: prescription,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('success-message').innerText = 'Diagnosa berhasil disimpan!';
+                    document.getElementById('diagnosis-form').reset();
+                } else {
+                    alert(data.error || 'Gagal menyimpan diagnosa.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+    </script>
 </body>
 
 </html>
