@@ -4,7 +4,7 @@ use Firebase\JWT\JWT;
 
 class JwtHelper
 {
-    private static $secretKey = base64_encode('secret-key');
+    private static $secretKey = "666";
     private static $issuedAt;
     private static $expirationTime = 3600;
     private static $audience = "vetconnectapp";
@@ -28,7 +28,6 @@ class JwtHelper
     public static function decode($jwt)
     {
         try {
-            // Mengembalikan payload sebagai object
             return JWT::decode($jwt, self::$secretKey);
         } catch (Exception $e) {
             throw new Exception("Invalid token: " . $e->getMessage());

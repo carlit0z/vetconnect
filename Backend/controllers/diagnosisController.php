@@ -9,7 +9,6 @@ class DiagnosisController {
         $this->diagnosisModel = new Diagnosis($pdo);
     }
 
-    // Tambahkan diagnosis baru
     public function createDiagnosis() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
@@ -30,7 +29,6 @@ class DiagnosisController {
         }
     }
 
-    // Ambil diagnosis berdasarkan ID konsultasi
     public function getDiagnosesByConsultationId($consultation_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if (!$consultation_id) {
@@ -43,7 +41,6 @@ class DiagnosisController {
         }
     }
 
-    // Ambil diagnosis berdasarkan ID diagnosis
     public function getDiagnosisById($diagnosis_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if (!$diagnosis_id) {
@@ -55,8 +52,6 @@ class DiagnosisController {
             echo json_encode($diagnosis ? $diagnosis : ['error' => 'Diagnosis not found']);
         }
     }
-
-    // Perbarui diagnosis
     public function updateDiagnosis($diagnosis_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $data = json_decode(file_get_contents("php://input"));
@@ -76,7 +71,6 @@ class DiagnosisController {
         }
     }
 
-    // Hapus diagnosis
     public function deleteDiagnosis($diagnosis_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             if (!$diagnosis_id) {

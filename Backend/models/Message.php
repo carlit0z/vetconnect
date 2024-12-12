@@ -27,21 +27,18 @@ class Message {
         return $stmt->fetch();
     }
 
-    // Perbarui pesan
     public function updateMessage($message_id, $message_content) {
         $sql = "UPDATE chat_messages SET message_content = ? WHERE message_id = ?";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$message_content, $message_id]);
     }
 
-    // Hapus pesan berdasarkan ID pesan
     public function deleteMessage($message_id) {
         $sql = "DELETE FROM chat_messages WHERE message_id = ?";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$message_id]);
     }
 
-    // Hapus semua pesan berdasarkan ID konsultasi
     public function deleteMessagesByConsultationId($consultation_id) {
         $sql = "DELETE FROM chat_messages WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);

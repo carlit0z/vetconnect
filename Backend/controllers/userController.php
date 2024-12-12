@@ -1,5 +1,4 @@
 <?php
-
 require_once '../models/User.php';
 require_once '../helpers/JwtHelper.php';
 
@@ -10,7 +9,6 @@ class UserController {
         $this->userModel = new User($pdo);
     }
 
-    // Register pengguna baru
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
@@ -27,7 +25,6 @@ class UserController {
         }
     }
 
-    // Login pengguna
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
@@ -42,7 +39,6 @@ class UserController {
         }
     }
 
-    // Ambil semua pengguna
     public function getAllUsers() {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $users = $this->userModel->getAllUsers();
@@ -50,7 +46,6 @@ class UserController {
         }
     }
 
-    // Update data pengguna
     public function updateUser($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $data = json_decode(file_get_contents("php://input"));
@@ -62,7 +57,6 @@ class UserController {
         }
     }
 
-    // Hapus pengguna
     public function deleteUser($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             $result = $this->userModel->deleteUser($user_id);

@@ -25,7 +25,6 @@ class ConsultationController {
         }
     }
 
-    // Ambil konsultasi berdasarkan ID pengguna
     public function getConsultationsByUserId($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $consultations = $this->consultationModel->getConsultationsByUserId($user_id);
@@ -33,7 +32,6 @@ class ConsultationController {
         }
     }
 
-    // Update status konsultasi
     public function updateConsultation($consultation_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $data = json_decode(file_get_contents("php://input"));
@@ -44,7 +42,6 @@ class ConsultationController {
         }
     }
 
-    // Hapus konsultasi
     public function deleteConsultation($consultation_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             $result = $this->consultationModel->deleteConsultation($consultation_id);

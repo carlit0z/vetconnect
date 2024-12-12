@@ -7,14 +7,12 @@ class Diagnosis {
         $this->pdo = $pdo;
     }
 
-    // Tambah diagnosis baru
     public function createDiagnosis($consultation_id, $pet_id, $notes, $prescription) {
         $sql = "INSERT INTO diagnoses (consultation_id, pet_id, notes, prescription) VALUES (?, ?, ?, ?)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$consultation_id, $pet_id, $notes, $prescription]);
     }
 
-    // Ambil diagnosis berdasarkan ID konsultasi
     public function getDiagnosesByConsultationId($consultation_id) {
         $sql = "SELECT * FROM diagnoses WHERE consultation_id = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -33,14 +31,11 @@ class Diagnosis {
 
     }
 
-    // Perbarui diagnosis
     public function updateDiagnosis($diagnosis_id, $notes, $prescription) {
         $sql = "UPDATE diagnoses SET notes = ?, prescription = ? WHERE diagnosis_id = ?";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$notes, $prescription, $diagnosis_id]);
     }
-
-    // Hapus diagnosis
     public function deleteDiagnosis($diagnosis_id) {
         $sql = "DELETE FROM diagnoses WHERE diagnosis_id = ?";
         $stmt = $this->pdo->prepare($sql);

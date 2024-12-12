@@ -9,7 +9,6 @@ class MessageController {
         $this->messageModel = new Message($pdo);
     }
 
-    // Tambah pesan baru
     public function createMessage() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
@@ -25,7 +24,6 @@ class MessageController {
         }
     }
 
-    // Ambil semua pesan berdasarkan ID konsultasi
     public function getMessagesByConsultationId($consultation_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             if (!$consultation_id) {

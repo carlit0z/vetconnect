@@ -28,7 +28,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Firebase\\JWT\\": "src"
+            "Firebase\\JWT\\": "src",
+            "App\\": "Backend/"
         }
     },
     "require-dev": {
@@ -39,4 +40,5 @@
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0"
     }
+    
 }

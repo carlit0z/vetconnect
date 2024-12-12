@@ -9,7 +9,6 @@ class PetController {
         $this->petModel = new Pet($pdo);
     }
 
-    // Tambah hewan baru
     public function createPet() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents("php://input"));
@@ -25,7 +24,6 @@ class PetController {
         }
     }
 
-    // Ambil semua hewan berdasarkan ID pengguna
     public function getPetsByUserId($user_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $pets = $this->petModel->getPetsByUserId($user_id);
@@ -33,7 +31,6 @@ class PetController {
         }
     }
 
-    // Update data hewan
     public function updatePet($pet_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
             $data = json_decode(file_get_contents("php://input"));
@@ -43,8 +40,6 @@ class PetController {
             echo json_encode($result ? ['message' => 'Pet updated successfully'] : ['error' => 'Failed to update pet']);
         }
     }
-
-    // Hapus hewan
     public function deletePet($pet_id) {
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             $result = $this->petModel->deletePet($pet_id);
