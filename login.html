@@ -140,17 +140,17 @@
     <section class="login-section">
         <div class="login-container">
             <h2>Masuk ke Akun Anda</h2>
-            <form action="proses.php" method="POST">
+            <form id="login-form">
                 <div class="input-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Masukkan Username" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Masukkan Email" required>
                 </div>
                 <div class="input-group">
                     <label for="password">Kata Sandi</label>
                     <input type="password" id="password" name="password" placeholder="Masukkan Kata Sandi" required>
                 </div>
                 <button type="submit" class="login-btn">Login</button>
-                <p class="signup-link">Belum punya akun? <a href="register.php">Daftar Sekarang</a></p>
+                <p class="signup-link">Belum punya akun? <a href="register.html">Daftar Sekarang</a></p>
             </form>
         </div>
     </section>
@@ -160,6 +160,39 @@
         <p>&copy; 2024 VetConnect. Semua Hak Dilindungi.</p>
     </footer>
 
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Ambil nilai input
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Kirim data ke server
+                const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Login berhasil!');
+                    localStorage.setItem('jwtToken', data.token); // Simpan token ke localStorage
+                    window.location.href = 'dashboard.html'; // Redirect ke dashboard
+                } else {
+                    alert(data.error || 'Login gagal');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            }
+        });
+    </script>
 </body>
 
 </html>

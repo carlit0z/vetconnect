@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/Message.php';
+require_once './models/Message.php';
 
 class MessageController {
     private $messageModel;

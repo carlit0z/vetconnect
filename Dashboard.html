@@ -193,35 +193,35 @@
     </button>
     <div class="sidebar">
         <ul class="menu">
-            <li><a href="#dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="Dashboard.html"fas fa-home"></i> Dashboard</a></li>
             <li><a href="#pet-list"><i class="fas fa-paw"></i> Daftar Hewan</a></li>
             <li><a href="#consultation"><i class="fas fa-briefcase-medical"></i> Konsultasi</a></li>
             <li><a href="#chat"><i class="fas fa-comments"></i> Chat</a></li>
             <li><a href="#profile"><i class="fas fa-user"></i> Profil</a></li>
-            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
 
         </ul>
     </div>
     <main class="content">
         <header class="header">
-            <h2>Selamat Datang, Pengguna!</h2>
+            <h2>Selamat Datang, User!</h2>
             <p>Kelola kebutuhan hewan peliharaan Anda dengan mudah.</p>
-        </header>
+        </header>        
         <section class="cards">
             <div class="card">
                 <h3>Daftar Hewan</h3>
                 <p>Daftarkan dan Kelola informasi tentang hewan peliharaan Anda.</p>
-                <a href="#pet-list" class="btn">Daftar Sekarang</a>
+                <a href="./Frontend/form/FormPets.php" class="btn">Daftar Sekarang</a>
             </div>
             <div class="card">
                 <h3>Konsultasi</h3>
                 <p>Ajukan konsultasi kepada dokter hewan profesional.</p>
-                <a href="#consultation" class="btn">Buat Konsultasi</a>
+                <a href="./Frontend/form/FormConsultation.php" class="btn">Buat Konsultasi</a>
             </div>
             <div class="card">
                 <h3>Chat</h3>
                 <p>Bicarakan langsung dengan dokter hewan.</p>
-                <a href="#chat" class="btn">Chat Sekarang</a>
+                <a href="./Frontend/chat.php" class="btn">Chat Sekarang</a>
             </div>
         </section>
 
@@ -232,6 +232,7 @@
 
 
     <script>
+        const username = localStorage.getItem('username');
         const toggleBtn = document.getElementById('toggle-btn');
         const sidebar = document.querySelector('.sidebar');
         const content = document.querySelector('.content');

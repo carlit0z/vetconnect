@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/Consultation.php';
+require_once './models/Consultation.php';
 
 class ConsultationController {
     private $consultationModel;

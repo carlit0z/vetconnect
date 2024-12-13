@@ -163,25 +163,25 @@
     </div>
 
     <script>
-        document.getElementById('pet-form').addEventListener('submit', async function (e) {
+        document.getElementById('pet-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // Ambil nilai input
             const name = document.getElementById('nama-hewan').value;
-            const type = document.getElementById('pet-type').value;
+            const species = document.getElementById('pet-type').value;
             const age = document.getElementById('umur').value;
             const gender = document.getElementById('pet-gender').value;
+            const username = "user123"; // Username harus sesuai dengan pengguna
 
             try {
-                // Kirim data ke server
                 const response = await fetch('http://localhost/VetConnect/Backend/server.php?endpoint=pets', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        username: username,
                         name: name,
-                        species: type,
+                        species: species,
                         age: age,
                         gender: gender
                     }),

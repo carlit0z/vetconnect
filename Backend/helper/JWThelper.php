@@ -7,8 +7,7 @@ class JwtHelper
     private static $secretKey = "666";
     private static $issuedAt;
     private static $expirationTime = 3600;
-    private static $audience = "vetconnectapp";
-    private static $issuer = "api.vetconnect";
+
 
     public static function encode($data)
     {
@@ -18,8 +17,6 @@ class JwtHelper
         $payload = [
             'iat' => self::$issuedAt,
             'exp' => $expirationTime,
-            'aud' => self::$audience,
-            'iss' => self::$issuer,
             'data' => $data
         ];
 

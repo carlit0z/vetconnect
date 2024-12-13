@@ -1,6 +1,6 @@
 <?php
 
-require_once '../models/Diagnosis.php';
+require_once './models/Diagnosis.php';
 
 class DiagnosisController {
     private $diagnosisModel;
